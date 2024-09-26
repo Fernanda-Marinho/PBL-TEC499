@@ -169,8 +169,6 @@ int unmap_physical (void *, unsigned int);
 
 //funcoes novas
 int moviment(int); 
-int loop_accel(void); 
-void teste(void); 
-
+uint8_t configureAccel(void); 
 
 #endif 

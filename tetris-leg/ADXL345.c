@@ -14,13 +14,13 @@ static int fd_i2c0base = -1, fd_sysmgr = -1;
 
 //recebe x e retorna o movimento (centro, direita, esquerda)
 int moviment(x){
-    int16_t right_moviment = 450;  
-    int16_t left_moviment = -450;
+    int16_t right_moviment = 90;  
+    int16_t left_moviment = -90;
     int16_t m; 
     if (x > right_moviment) {
-        m = 1; 
+        m = 1; //1 = direita 
     } else if (x < left_moviment) {
-        m = 2; 
+        m = 2; //2 = esquerda
     } else {
         m = 0; 
     }
@@ -31,7 +31,7 @@ int moviment(x){
     printf("aaaa\n"); 
 } */
 
-int loop_accel(void){
+uint8_t configureAccel(void){
 
     uint8_t devid;
     int16_t mg_per_lsb = 4;
@@ -64,7 +64,7 @@ int loop_accel(void){
 	printf("Getting ID\n");
 
 	ADXL345_IdRead(&devid);
-	printf("%#x\n", devid);
+	//printf("%#x\n", devid);
     
     // Configure Pin Muxing
     //Pinmux_Config();
@@ -74,9 +74,11 @@ int loop_accel(void){
     
     // 0xE5 is read from DEVID(0x00) if I2C is functioning correctly
     ADXL345_REG_READ(0x00, &devid);
+
+    return devid; 
     
     // Correct Device ID
-    if (devid == 0xE5){
+    /* if (devid == 0xE5){
         // Initialize accelerometer chip
         ADXL345_Init();
         
@@ -85,19 +87,15 @@ int loop_accel(void){
                 ADXL345_XYZ_Read(XYZ);
                 direction = moviment((XYZ[0]*mg_per_lsb)); 
                 printf("%d\n",direction); 
-                printf("X=%d mg, Y=%d mg, Z=%d mg\n", XYZ[0]*mg_per_lsb, XYZ[1]*mg_per_lsb, XYZ[2]*mg_per_lsb);
+                //printf("X=%d mg, Y=%d mg, Z=%d mg\n", XYZ[0]*mg_per_lsb, XYZ[1]*mg_per_lsb, XYZ[2]*mg_per_lsb);
             }
         }
     } else {
         printf("Incorrect device ID\n");
-    }
-    
-    return 0;
+    } */
+
 }
 
-void teste(){
-    printf("aaaaaa\n"); 
-}
 
 void Pinmux_Config(){
     // Configurar pin muxing (no sysmgr) para conectar os fios do ADXL345 ao I2C0

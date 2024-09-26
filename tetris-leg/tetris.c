@@ -13,6 +13,11 @@
 #define HEIGHT 20
 #define TETROMINOES_QUANT 13
 
+/* #define PUSHBUTTONS ((volatile long *) 0xFF200050)
+#define EDGE_CAPTURE ((volatile long *) 0xFF20005C) */
+
+#define RLEDs ((volatile long *) 0xFF200000)
+
 // Matriz de tetrominos
 int tetrominoes[TETROMINOES_QUANT][4][4] = {
     // falta colocar/mudar as peças 
@@ -88,13 +93,6 @@ void* monitorButton(void* arg) {
             gamePaused(); */
         }
         usleep(10000);
-    }
-    return NULL;
-}
-
-void* accel(void* arg) {
-    while (true) {
-        loop_accel(); 
     }
     return NULL;
 }
@@ -244,18 +242,38 @@ bool isGameOver() {
     return checkCollision(currentX, currentY); // Se houver colisão no topo, o jogo acaba
 }
 
+
+/* void stateBottom(){
+    long state = *PUSHBUTTONS;
+    if (state & 0x1) {  // Se KEY0 for pressionado
+        isPaused = 1;       // Pausar o jogo
+    }
+    else{
+        isPaused = 0; 
+    }
+
+    *EDGE_CAPTURE = 0;
+} */
+
 // Função principal do jogo
 void gameLoop() {
     
     int ch;
+    uint8_t idAccel; 
+    int16_t XYZ[3];
+    int16_t direction;
+
+    idAccel = configureAccel(); 
+    //printf("%p\n",idAccel); 
+
+
     initGame();
     
     // Controle de tempo para a animação
     int speed = 500; // Velocidade de queda (500 milissegundos)
     clock_t lastMoveTime = clock();
-    
-    // nodelay(stdscr, TRUE); // Faz com que getch() não bloqueie o loop (para entradas com o teclado)
-    while (1) {
+    if (idAccel == 0xE5){
+        while (1) {
         buttonPressed();
         if (isGameOver()) { // Verifica se o jogo acabou
             // clear();
@@ -290,33 +308,27 @@ void gameLoop() {
         // ch = getch(); // Captura a tecla pressionada (não bloqueia o programa)
         
         // Verifica se o usuário pressionou alguma tecla
-        /* if (ch != ERR) {
-            switch (ch) {
-                case 'a': // Mover para a esquerda
-                    if (!isPaused) movePiece(-1, 0);
-                    break;
-                case 'd': // Mover para a direita
+        if (ADXL345_WasActivityUpdated()){
+            ADXL345_XYZ_Read(XYZ);
+            direction = moviment((XYZ[0]*4)); //4 = mg_per_lsb
+            switch (direction) { //moviment in ch 
+                case 1: // Mover para a direita
                     if (!isPaused) movePiece(1, 0);
                     break;
-                case 's': // Mover mais rápido para baixo
-                    if (!isPaused) movePiece(0, 1);
+                case 2: // Mover para a esquerda
+                    if (!isPaused) movePiece(-1, 0);
                     break;
-                case 'p': // Pausar ou retomar o jogo
-                    isPaused = !isPaused; // Alterna o estado de pausa
-                    break;
-                case 'q': // Sair do jogo
-                    endwin(); // Fecha a janela ncurses
-                    exit(0);
-            }
-        } */
-
-        usleep(50000); // Pequeno atraso para evitar uso excessivo de CPU
+                }
+            }       
+        
+            usleep(50000); // Pequeno atraso para evitar uso excessivo de CPU
+        }
     }
+    
 }
 
 int main() {
-    printf("mainnn\n");
-    teste();
+    
     // initscr(); // Inicializa a tela ncurses
     // noecho(); // Não exibe as teclas digitadas
     // cbreak(); // Desativa o buffer de linha
@@ -330,10 +342,10 @@ int main() {
 
 
     // Cria a thread que irá monitorar o botão
-    /* if (pthread_create(&buttonThread, NULL, monitorButton, NULL) != 0) {
-        perror("Erro ao criar a thread do botão");
-        return 1; // Erro ao criar a thread
-    } */
+    // if (pthread_create(&buttonThread, NULL, monitorButton, NULL) != 0) {
+    //     perror("Erro ao criar a thread do botão");
+    //     return 1; // Erro ao criar a thread
+    // }
 
     //thread acelerometro
     /* if (pthread_create(&accelThread, NULL, accel, NULL) != 0) {
@@ -345,8 +357,8 @@ int main() {
     gameLoop(); // Inicia o loop do jogo
     // endwin(); // Finaliza a janela ncurses
 
-    //pthread_join(buttonThread, NULL);
-    //pthread_join(accelThread, NULL);
+    // pthread_join(buttonThread, NULL);
+    // pthread_join(accelThread, NULL);
 
     
 

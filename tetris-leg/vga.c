@@ -40,7 +40,7 @@ void drawMonitor(int rows, int cows, int matriz[rows][cows], int rows2, int cows
 
                     /* case 0:
                         video_box((j*BLOCK_SIZE+90), (i*BLOCK_SIZE+10), (j*BLOCK_SIZE+10+90), (i*BLOCK_SIZE+10+10), video_RED); // cor do fundo */
-                    */
+                    
                 }
             }
         }
@@ -61,7 +61,6 @@ void drawMonitor(int rows, int cows, int matriz[rows][cows], int rows2, int cows
             }
         }
 
-        // OK
         // desenha a proxima peca no tabuleiro
         video_box(240,30,290,80, video_GREY);
         int nextPieceHeight = sizeof(tetrominoes[nextPiece]) / sizeof(tetrominoes[nextPiece][0]);
@@ -103,6 +102,10 @@ void gameOver(){
     video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
     video_text(33, 15, "GAME OVER!");
     video_show();
+    video_open();
+    video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
+    video_text(33, 15, "GAME OVER!");
+    video_show();
     video_close();
 }
 
@@ -110,8 +113,10 @@ void mainWindow(){
     video_open();
     clearVGA();
     video_box(100, 10, 130, 20, video_RED);
-    
-    
+    video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
+    video_text(33, 15, "BEM VINDO AO JOGO!");
+    video_show();
+    video_close();
 }
 
 void clearVGA(){

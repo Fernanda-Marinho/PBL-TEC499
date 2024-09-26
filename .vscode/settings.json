@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "adxl345.h": "c",
+        "physical.h": "c"
+    }
+}
