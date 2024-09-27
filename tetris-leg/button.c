@@ -8,9 +8,9 @@ int buttonPressed(){
     int *data;
     if(KEY_open()){
         if(KEY_read(&data)){
-            // if(data != 0){
-            //     printf("botao n: %d\n", data);
-            // }
+            /* if(data != 0){
+                printf("botao n: %d\n", data);
+            } */
             if(data == 1){
                 KEY_close();
                 return 1;

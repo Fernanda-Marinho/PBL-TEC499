@@ -73,10 +73,11 @@ void drawMonitor(char* points, int rows, int cows, int matriz[rows][cows], int r
             for (int j = 0; j < 4; j++) {
                 if (tetrominoes[nextPiece][i][j]) {
                     video_box(
-                    (j*BLOCK_SIZE+250+(j-1)), 
-                    (i*BLOCK_SIZE+40+(i-1)), 
-                    (j*BLOCK_SIZE+10+250+(j-1)), 
-                    (i*BLOCK_SIZE+40+10+(i-1)), video_PINK);
+                    (j*BLOCK_SIZE+250+(j-1)), // x1
+                    (i*BLOCK_SIZE+40+(i-1)),  // y1
+                    (j*BLOCK_SIZE+10+250+(j-1)), // x2
+                    (i*BLOCK_SIZE+40+10+(i-1)), // y2
+                    video_PINK); // cor do bloco
                 }
             }
         }
@@ -95,8 +96,8 @@ void drawMonitor(char* points, int rows, int cows, int matriz[rows][cows], int r
 void gamePaused(){
     video_open();
     video_box(75, 40, 220, 100, video_GREY); // desenha o retangulo lá
-    video_text(30, 15, "JOGO PAUSADO!");
-    video_text(20, 20, "pressione novamente para continuar!");
+    video_text(33, 15, "PAUSED");
+    video_text(28, 20, "press KEY0 to resume");
     video_show();
     video_close();
 }
@@ -115,18 +116,23 @@ void gameOver(){
 
 void mainWindow(){
     video_open();
-    clearVGA();
-    video_box(100, 10, 130, 20, video_RED);
+    // clearVGA();
+    // video_box(100, 10, 130, 20, video_RED);
     video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
-    video_text(33, 15, "BEM VINDO AO JOGO!");
-    video_box(100, 10, 130, 20, video_RED);
+    video_text(33, 15, "WELCOME, PLAYER!");
+    // video_box(100, 10, 133, 20, video_RED);
+    video_text(30, 20, "PRESS KEY1 TO START!!!");
+
     video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
-    video_text(33, 15, "BEM VINDO AO JOGO!");
+    video_text(33, 15, "WELCOME, PLAYER!");
+    video_text(30, 20, "PRESS KEY1 TO START!!!");
+
     video_show();
     video_close();
 }
 
 void clearVGA(){
+    video_open();
     video_erase();
     video_clear();
     video_show();
@@ -134,4 +140,5 @@ void clearVGA(){
     video_erase();
     video_clear();
     video_show();
+    video_close();
 }
