@@ -15,15 +15,17 @@
 
 #define BLOCK_SIZE 11
 
-void drawMonitor(int rows, int cows, int matriz[rows][cows], int rows2, int cows2, int currentPiece, int tetrominoes[currentPiece][rows2][cows2], int currentX, int currentY, int nextPiece){
+
+//points se refere a pontuação, por isso alteracao da funcao 
+void drawMonitor(char* points, int rows, int cows, int matriz[rows][cows], int rows2, int cows2, int currentPiece, int tetrominoes[currentPiece][rows2][cows2], int currentX, int currentY, int nextPiece){
     
     if(video_open() == 1){
         video_clear();
         video_erase();
 
-        video_box(100, 0, 221, 239, video_WHITE); // desenha o retangulo branco lá
-
-
+        video_box(88, 0, 208, 239, video_WHITE); // desenha o retangulo branco lá
+        
+        // video_text(60, 30, point);
 
         // desenha a matriz principal
         for(int i = 0; i < rows; i++){
@@ -52,19 +54,21 @@ void drawMonitor(int rows, int cows, int matriz[rows][cows], int rows2, int cows
             for (int j = 0; j < 4; j++) {
                 if (tetrominoes[currentPiece][i][j]) {
                     video_box(
-                            (j*BLOCK_SIZE+11*currentX+90+(j-1)+3), 
-                            (i*BLOCK_SIZE+11*currentY+(i-1)+1), 
-                            (j*BLOCK_SIZE+11*currentX+10+90+(j-1)+3), 
-                            (i*BLOCK_SIZE+11*currentY+10+(i-1)+1), 
+                            (j*BLOCK_SIZE+(BLOCK_SIZE*currentX+currentX)+90+(j-1)), 
+                            (i*BLOCK_SIZE+(BLOCK_SIZE*currentY+currentY)+(i-1)), 
+                            (j*BLOCK_SIZE+(BLOCK_SIZE*currentX+currentX)+10+90+(j-1)), 
+                            (i*BLOCK_SIZE+(BLOCK_SIZE*currentY+currentY)+10+(i-1)), 
                             video_GREEN);
                 }
             }
         }
 
         // desenha a proxima peca no tabuleiro
+        video_text(60, 25, "SCORE: ");
+        video_text(70, 25, points);
         video_box(240,30,290,80, video_GREY);
         int nextPieceHeight = sizeof(tetrominoes[nextPiece]) / sizeof(tetrominoes[nextPiece][0]);
-        video_text(60, 5, "PROXIMA PECA: ");
+        video_text(60, 5, "NEXT: ");
         for (int i = 0; i < nextPieceHeight; i++) {
             for (int j = 0; j < 4; j++) {
                 if (tetrominoes[nextPiece][i][j]) {
@@ -76,8 +80,8 @@ void drawMonitor(int rows, int cows, int matriz[rows][cows], int rows2, int cows
                 }
             }
         }
-        video_text(60, 30, "PONTUACAO: ");
 
+        
         video_show();                
         video_close();
 
@@ -90,21 +94,21 @@ void drawMonitor(int rows, int cows, int matriz[rows][cows], int rows2, int cows
 
 void gamePaused(){
     video_open();
-    video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
-    video_text(33, 15, "JOGO PAUSADO!");
-    video_text(22, 20, "pressione novamente para continuar!");
+    video_box(75, 40, 220, 100, video_GREY); // desenha o retangulo lá
+    video_text(30, 15, "JOGO PAUSADO!");
+    video_text(20, 20, "pressione novamente para continuar!");
     video_show();
     video_close();
 }
 
 void gameOver(){
     video_open();
-    video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
-    video_text(33, 15, "GAME OVER!");
+    video_box(75, 40, 220, 100, video_GREY); // desenha o retangulo lá
+    video_text(30, 15, "GAME OVER!");
     video_show();
     video_open();
-    video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
-    video_text(33, 15, "GAME OVER!");
+    video_box(75, 40, 220, 100, video_GREY); // desenha o retangulo lá
+    video_text(30, 15, "GAME OVER!");
     video_show();
     video_close();
 }
@@ -112,6 +116,9 @@ void gameOver(){
 void mainWindow(){
     video_open();
     clearVGA();
+    video_box(100, 10, 130, 20, video_RED);
+    video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
+    video_text(33, 15, "BEM VINDO AO JOGO!");
     video_box(100, 10, 130, 20, video_RED);
     video_box(80, 40, 240, 100, video_GREY); // desenha o retangulo lá
     video_text(33, 15, "BEM VINDO AO JOGO!");

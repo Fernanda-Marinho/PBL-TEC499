@@ -2,5 +2,6 @@
 #define BUTTON_H
 
 int buttonPressed();
+void buttonRead();
 
 #endif

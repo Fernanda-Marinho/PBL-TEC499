@@ -8,16 +8,10 @@
 #include "button.h"
 #include "ADXL345.h"
 #include <pthread.h>
-#include <string.h>
 
 #define WIDTH 10
 #define HEIGHT 20
 #define TETROMINOES_QUANT 13
-
-/* #define PUSHBUTTONS ((volatile long *) 0xFF200050)
-#define EDGE_CAPTURE ((volatile long *) 0xFF20005C) */
-
-#define RLEDs ((volatile long *) 0xFF200000)
 
 // Matriz de tetrominos
 int tetrominoes[TETROMINOES_QUANT][4][4] = {
@@ -69,7 +63,7 @@ int tetrominoes[TETROMINOES_QUANT][4][4] = {
         {1, 1, 1},
         {0, 1, 0}
     }
-};
+	};
 
 // Campo de jogo
 int board[HEIGHT][WIDTH] = {0};
@@ -80,30 +74,8 @@ int currentPiece;   // Índice da peça atual
 int nextPiece;      // Índice da próxima peça
 bool isPaused = false; // estado de pausa do jogo
 int score = 0;
-char scoreStr[50] = "0";
-
 pthread_mutex_t pauseMutex;
 pthread_mutex_t eixoxMutex; 
-
-
-void intToStr(int N, char *str) {
-    int i = 0;
-    int sign = N;
-
-    while (N > 0) {
-        str[i++] = N % 10 + '0';
-      	N /= 10;
-    } 
-
-    str[i] = '\0';
-
-    for (int j = 0, k = i - 1; j < k; j++, k--) {
-        char temp = str[j];
-        str[j] = str[k];
-        str[k] = temp;
-    }
-}
-
 
 
 void* monitorButton(void* arg) {
@@ -155,7 +127,6 @@ bool checkCollision(int x, int y) {
 
 /* Função que remove as linhas que estão completas da matriz do jogo e move tudo que está em cima para baixo */
 void removeFullLines() {
-    //atualizar pontuação 
     for (int i = HEIGHT - 1; i >= 0; i--) {
         bool fullLine = true;
         for (int j = 0; j < WIDTH; j++) {
@@ -167,7 +138,6 @@ void removeFullLines() {
         if (fullLine) {
             // Remove a linha e atualiza a pontuação
             score += 100; // Adiciona 100 pontos por linha completa
-            intToStr(score, scoreStr);
             // Move todas as linhas acima uma linha para baixo
             for (int k = i; k > 0; k--) {
                 for (int j = 0; j < WIDTH; j++) {
@@ -267,19 +237,6 @@ bool isGameOver() {
     return checkCollision(currentX, currentY); // Se houver colisão no topo, o jogo acaba
 }
 
-
-/* void stateBottom(){
-    long state = *PUSHBUTTONS;
-    if (state & 0x1) {  // Se KEY0 for pressionado
-        isPaused = 1;       // Pausar o jogo
-    }
-    else{
-        isPaused = 0; 
-    }
-
-    *EDGE_CAPTURE = 0;
-} */
-
 // Função principal do jogo
 void gameLoop() {
     
@@ -298,9 +255,7 @@ void gameLoop() {
     int speed = 500; // Velocidade de queda (500 milissegundos)
     clock_t lastMoveTime = clock();
     if (idAccel == 0xE5){
-        ADXL345_Init();
         while (1) {
-        printf("SCORE: %s\n",scoreStr); 
         buttonPressed();
         if (isGameOver()) { // Verifica se o jogo acabou
             // clear();
@@ -315,7 +270,7 @@ void gameLoop() {
 
         if (!isPaused) {
             // drawBoard(); // Desenha o tabuleiro enquanto não está pausado
-            drawMonitor(scoreStr, HEIGHT, WIDTH, board, 4, 4, currentPiece, tetrominoes, currentX, currentY, nextPiece);
+            drawMonitor(HEIGHT, WIDTH, board, 4, 4, currentPiece, tetrominoes, currentX, currentY, nextPiece);
             // Controle do tempo para a peça descer automaticamente
             clock_t currentTime = clock();
             if ((currentTime - lastMoveTime) * 10000 / CLOCKS_PER_SEC > speed) {
@@ -355,7 +310,6 @@ void gameLoop() {
 }
 
 int main() {
-    
     // initscr(); // Inicializa a tela ncurses
     // noecho(); // Não exibe as teclas digitadas
     // cbreak(); // Desativa o buffer de linha

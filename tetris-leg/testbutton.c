@@ -41,8 +41,10 @@ int main(){
 
     sysmgr_base_ptr = (unsigned int *) sysmgrbase_virtual;
     reg = sysmgr_base_ptr + 0x50;
+    *sysmgr_base_ptr += 1;
     while(1){
-        printf("%d\n",*reg);
+     
+    printf("%d\n",*reg);
     }
     return 0; 
 }
