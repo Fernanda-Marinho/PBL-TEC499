@@ -1,15 +1,13 @@
 #include <intelfpgaup/KEY.h>
 #include "button.h"
 
-int botao;
-
+/* Checks if a button has been pressed and returns a corresponding 
+value: 1 for button 1, 2 for button 2, or 0 if no button has been pressed.  */
 int buttonPressed(){
     int *data;
+
     if(KEY_open()){
         if(KEY_read(&data)){
-            /* if(data != 0){
-                printf("botao n: %d\n", data);
-            } */
             if(data == 1){
                 KEY_close();
                 return 1;
@@ -20,11 +18,8 @@ int buttonPressed(){
             }
         }
     }
+
     KEY_close();
     return 0;
-
-}
-
-void buttonRead(){
 
 }
