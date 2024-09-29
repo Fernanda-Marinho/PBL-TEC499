@@ -6,7 +6,7 @@
 #include "vga.h"
 #include <stdbool.h>
 #include "button.h"
-#include "ADXL345.h"
+#include "adxl345.h"
 #include <pthread.h>
 #include <string.h>
 
@@ -233,7 +233,7 @@ void  gameLoop() {
     int16_t XYZ[3];
     int16_t direction;
 
-    idAccel = configureAccel(); 
+    idAccel = ADXL345_ConfigureToGame(); 
 
 
     initGame();

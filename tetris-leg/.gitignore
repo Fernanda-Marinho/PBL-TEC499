@@ -3,4 +3,7 @@ tetris
 teste
 testris.c
 tetris.o
+button.o
+vga.o 
+adxl345.o
 .vscode/

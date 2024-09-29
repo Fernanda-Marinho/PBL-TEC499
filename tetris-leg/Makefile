@@ -6,6 +6,9 @@ TAGS = lintelfpgaup
 
 all: $(TRG)
 
+
+
+#change ADXL345 to adxl345
 $(TRG): tetris.o vga.o button.o ADXL345.o
 	$(CC) $(CFLAGS) -o $(TRG) tetris.o vga.o button.o ADXL345.o -$(TAGS) -lpthread
 

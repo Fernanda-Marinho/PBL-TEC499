@@ -1,4 +1,4 @@
-#include "ADXL345.h"
+#include "adxl345.h"
 #include "address_map_arm.h"
 #include "physical.h"
 #include <stdio.h>
@@ -31,7 +31,7 @@ int moviment(x){
     printf("aaaa\n"); 
 } */
 
-uint8_t configureAccel(void){
+uint8_t ADXL345_ConfigureToGame(void){
 
     uint8_t devid;
     int16_t mg_per_lsb = 4;
