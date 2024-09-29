@@ -142,12 +142,6 @@ void I2C0_Enable_FPGA_Access();
 /* Pinmux Functions */
 void Pinmux_Config();
 
-/* Physical memory access Functions */
-int open_physical (int);
-void * map_physical (int, unsigned int, unsigned int);
-void close_physical (int);
-int unmap_physical (void *, unsigned int);
-
 /* Logical Functions */  
 int moviment(int); 
 
