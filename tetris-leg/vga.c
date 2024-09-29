@@ -2,16 +2,18 @@
 #include "vga.h"
 #include <intelfpgaup/video.h>
 
-#define video_WHITE 0xFFFF // Define some colors for video graphics
-#define video_YELLOW 0xFFE0
-#define video_RED 0xF800
-#define video_GREEN 0x07E0
-#define video_BLUE 0x041F
-#define video_CYAN 0x07FF
-#define video_MAGENTA 0xF81F
-#define video_GREY 0xC618
-#define video_PINK 0xFC18
-#define video_ORANGE 0xFC00
+
+/* Defines colors for video graphics */
+#define video_WHITE              0xFFFF 
+#define video_YELLOW             0xFFE0
+#define video_RED                0xF800
+#define video_GREEN              0x07E0
+#define video_BLUE               0x041F
+#define video_CYAN               0x07FF
+#define video_MAGENTA            0xF81F
+#define video_GREY               0xC618
+#define video_PINK               0xFC18
+#define video_ORANGE             0xFC00
 
 #define BLOCK_SIZE 11
 
@@ -25,7 +27,6 @@ void drawMonitor(char* points, int rows, int cows, int matriz[rows][cows], int r
 
         video_box(88, 0, 208, 239, video_WHITE); // desenha o retangulo branco lá
         
-        // video_text(60, 30, point);
 
         // desenha a matriz principal
         for(int i = 0; i < rows; i++){
@@ -39,9 +40,6 @@ void drawMonitor(char* points, int rows, int cows, int matriz[rows][cows], int r
                             (j*BLOCK_SIZE+10+90+(j-1)), 
                             (i*BLOCK_SIZE+10+(i-1)), video_ORANGE); // cor da peca
                         continue;
-
-                    /* case 0:
-                        video_box((j*BLOCK_SIZE+90), (i*BLOCK_SIZE+10), (j*BLOCK_SIZE+10+90), (i*BLOCK_SIZE+10+10), video_RED); // cor do fundo */
                     
                 }
             }
@@ -86,10 +84,9 @@ void drawMonitor(char* points, int rows, int cows, int matriz[rows][cows], int r
         video_show();                
         video_close();
 
-        // video_show();
 
     } else {
-    printf("Video nao conectado!\n");
+        printf("Video nao conectado!\n");
     }
 }
 
