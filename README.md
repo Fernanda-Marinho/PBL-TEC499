@@ -3,8 +3,8 @@
 Este projeto tem como objetivo criar um console dedicado, utilizando a plataforma de desenvolvimento DE1-SoC. A proposta é desenvolver um jogo inspirado no Tetris, integrando programação em C com interações diretas com o hardware. O controle das peças é feito por meio de um acelerômetro, que capta os movimentos do jogador, enquanto botões físicos permitem executar ações como iniciar, pausar e continuar. Além disso, a interface VGA é utilizada para projetar o jogo em um monitor externo.
 
 # Equipe:
-- Camila de Araújo Bastos
-- Nome 2
+- [Camila de Araújo Bastos](https://github.com/Caamilab)
+- [Fernanda Marinho Silva](https://github.com/Fernanda-Marinho/)
 - Nome 3
 
 # VGA
