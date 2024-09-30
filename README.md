@@ -7,6 +7,30 @@ Este projeto tem como objetivo criar um console dedicado, utilizando a plataform
 - Nome 2
 - Nome 3
 
+# VGA
+
+A funcionalidade de vídeo no projeto é implementada por meio de um conjunto de operações que gerenciam a saída de vídeo na tela VGA.
+
+## Lógica de Funcionamento
+
+Primeiramente, a conexão com o sistema de vídeo é estabelecida, garantindo que todas as operações subsequentes possam ser realizadas corretamente. Em seguida, é realizado um processo de limpeza do buffer de vídeo, removendo qualquer conteúdo que possa ter sido previamente desenhado. Isso assegura que a visualização na tela seja clara e livre de interferências.
+
+Uma vez que a tela está limpa, retângulos podem ser desenhados com coordenadas e cores específicas, permitindo a personalização dos elementos gráficos que serão apresentados ao usuário. Após completar os desenhos desejados, o conteúdo armazenado no buffer é atualizado na tela, tornando visíveis todas as alterações realizadas.
+
+Por fim, é importante encerrar a conexão com o sistema de vídeo, liberando os recursos utilizados durante a execução. Esse fechamento é crucial para evitar vazamentos de memória e garantir que o sistema retorne ao seu estado original após a conclusão das operações de vídeo.
+
+# Botão
+
+O sistema implementa uma thread dedicada ao monitoramento do estado dos botões, garantindo que a interação do usuário com o jogo seja detectada em tempo real.
+
+## Lógica de Funcionamento
+
+A thread de monitoramento é responsável por verificar continuamente o estado dos botões, garantindo que quaisquer alterações sejam capturadas instantaneamente. Para isso, a função de monitoramento entra em um loop infinito, onde uma função específica é chamada repetidamente para verificar se algum botão foi pressionado.
+
+Durante a execução do loop, um mutex é utilizado para proteger o acesso ao estado de pausa/início do jogo, assegurando que as alterações nesse estado sejam feitas de forma segura e evitando condições de corrida. Isso é crucial para a integridade do estado do jogo, especialmente em situações onde múltiplos eventos podem ocorrer simultaneamente.
+
+Para evitar sobrecarga do sistema e permitir que outros processos sejam executados, a thread faz uma pausa de 10 milissegundos entre as leituras dos botões. Essa abordagem equilibrada permite uma resposta rápida às interações do usuário, ao mesmo tempo que mantém a eficiência do sistema.
+
 # Mapeamento de Memória
 Para possibilitar o acesso ao acelerômetro (ADXL345) presente na placa DE1-SOC, é necessário mapear a memória física para o espaço de endereçamento virtual. Esse processo envolve duas etapas principais.
 
