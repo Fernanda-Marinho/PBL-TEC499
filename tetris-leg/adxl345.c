@@ -58,41 +58,6 @@ int unmap_physical(void * virtual_base, unsigned int span){
 	return 0;
 }
 
-uint8_t ADXL345_ConfigureToGame(void){
-
-    uint8_t devid;
-
-    //Configure MUX to connect I2C0 controller to ADXL345
-	if ((fd_sysmgr = open_physical(fd_sysmgr)) == -1) {
-		return(-1);
-	}
-
-	if ((sysmgrbase_virtual = map_physical(fd_sysmgr, SYSMGR_BASE, SYSMGR_SPAN)) == NULL) {
-		return(-1);
-	}
-
-	sysmgr_base_ptr = (unsigned int *) sysmgrbase_virtual;
-
-    if ((fd_i2c0base = open_physical(fd_i2c0base)) == -1) {
-		return(-1);
-	}
-
-	if ((i2c0base_virtual = map_physical(fd_i2c0base, I2C0_BASE, I2C0_SPAN)) == NULL) {
-		return(-1);
-	}
-
-	i2c0_base_ptr = (unsigned int *) i2c0base_virtual;
-	printf("Starting I2C0_Init()\n");
-
-	I2C0_Init();
-	printf("Getting ID\n");
-
-	ADXL345_IdRead(&devid);
-    I2C0_Init();
-    ADXL345_REG_READ(0x00, &devid);
-
-    return devid; 
-}
 
 
 void Pinmux_Config(){
@@ -330,6 +295,43 @@ void ADXL345_XYZ_Read(int16_t szData16[3]){
 // Ler o registrador de ID
 void ADXL345_IdRead(uint8_t *pId){
     ADXL345_REG_READ(ADXL345_REG_DEVID, pId);
+}
+
+
+uint8_t ADXL345_ConfigureToGame(void){
+
+    uint8_t devid;
+
+    //Configure MUX to connect I2C0 controller to ADXL345
+	if ((fd_sysmgr = open_physical(fd_sysmgr)) == -1) {
+		return(-1);
+	}
+
+	if ((sysmgrbase_virtual = map_physical(fd_sysmgr, SYSMGR_BASE, SYSMGR_SPAN)) == NULL) {
+		return(-1);
+	}
+
+	sysmgr_base_ptr = (unsigned int *) sysmgrbase_virtual;
+
+    if ((fd_i2c0base = open_physical(fd_i2c0base)) == -1) {
+		return(-1);
+	}
+
+	if ((i2c0base_virtual = map_physical(fd_i2c0base, I2C0_BASE, I2C0_SPAN)) == NULL) {
+		return(-1);
+	}
+
+	i2c0_base_ptr = (unsigned int *) i2c0base_virtual;
+	printf("Starting I2C0_Init()\n");
+
+	I2C0_Init();
+	printf("Getting ID\n");
+
+	ADXL345_IdRead(&devid);
+    I2C0_Init();
+    ADXL345_REG_READ(0x00, &devid);
+
+    return devid; 
 }
 
 

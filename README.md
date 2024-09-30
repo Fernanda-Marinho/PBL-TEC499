@@ -102,3 +102,6 @@ Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seg
 | Botão 0                                     | Continuar o jogo.                                       |
 | Formar uma linha completa                   | Quebrar a linha e somar 100 pontos.                     |
 | Permitir que uma peça chegue ao topo da tela | Game over.     
+
+
+![Iniciar o jogo](media/initgame.gif)
