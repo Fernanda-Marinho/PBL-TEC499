@@ -105,3 +105,9 @@ Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seg
 
 
 ![Iniciar o jogo](media/initgame.gif)
+![Mover peça para a esquerda](media/left.gif)
+![Peça centralizada](media/center.gif)
+![Mover peça para a direita](media/right.gif)
+![Pausa no jogo](media/pause.gif)
+![Pontuação](media/score.gif)
+![Game over](media/gameover.gif)

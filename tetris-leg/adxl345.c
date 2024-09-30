@@ -58,42 +58,26 @@ int unmap_physical(void * virtual_base, unsigned int span){
 	return 0;
 }
 
-
-
+/* Configures the pin multiplexing (in sysmgr) to connect ADXL345 wires to I2C0.  */
 void Pinmux_Config(){
-    // Configurar pin muxing (no sysmgr) para conectar os fios do ADXL345 ao I2C0
     *(sysmgr_base_ptr + SYSMGR_I2C0USEFPGA) = 0;
     *(sysmgr_base_ptr + SYSMGR_GENERALIO7) = 1;
     *(sysmgr_base_ptr + SYSMGR_GENERALIO8) = 1;
 }
 
-// Inicializa o controlador I2C0 para uso com o chip ADXL345
+/* Initializes the I2C0 controller for communication with the ADXL345 accelerometer.  */
 void I2C0_Init(){
-
-    // Abort any ongoing transmits and disable I2C0.
     *(i2c0_base_ptr + I2C0_ENABLE) = 2;
+    while(((*(i2c0_base_ptr + I2C0_ENABLE_STATUS))&0x1) == 1){} // wait until I2C0 be disabled 
     
-    // Esperar até que o I2C0 esteja desabilitado
-    while(((*(i2c0_base_ptr + I2C0_ENABLE_STATUS))&0x1) == 1){}
-    
-    // Configurar o registrador de configuração com as configurações desejadas (atuar como
-    // mestre, usar endereçamento de 7 bits, modo rápido (400kb/s)).
     *(i2c0_base_ptr + I2C0_CON) = 0x65;
-    
-    // Definir endereço alvo (desabilitar comandos especiais, usar endereçamento de 7 bits)
     *(i2c0_base_ptr + I2C0_TAR) = 0x53;
     
-    // Definir contagens altas/baixas do SCL (Assumindo clock de entrada de 100MHz no Controlador I2C0).
-    // O período mínimo alto do SCL é 0.6us, e o período mínimo baixo do SCL é 1.3us,
-    // No entanto, o período combinado deve ser de 2.5us ou maior, então adiciona-se 0.3us a cada.
     *(i2c0_base_ptr + I2C0_FS_SCL_HCNT) = 60 + 30; // 0.6us + 0.3us
     *(i2c0_base_ptr + I2C0_FS_SCL_LCNT) = 130 + 30; // 1.3us + 0.3us
     
-    // Habilitar o controlador
-    *(i2c0_base_ptr + I2C0_ENABLE) = 1;
-    
-    // Esperar até que o controlador esteja habilitado
-    while(((*(i2c0_base_ptr + I2C0_ENABLE_STATUS))&0x1) == 0){}
+    *(i2c0_base_ptr + I2C0_ENABLE) = 1; // enable the controller
+    while(((*(i2c0_base_ptr + I2C0_ENABLE_STATUS))&0x1) == 0){} //// wait until I2C0 be enabled
     
 }
 
