@@ -8,35 +8,59 @@
 #include <stdint.h> 
 #include <fcntl.h>
 
+/* Manage registers, memory mapping and access to I2C0   */
 static unsigned int * i2c0_base_ptr, * sysmgr_base_ptr;
 static void * i2c0base_virtual, * sysmgrbase_virtual;
 static int fd_i2c0base = -1, fd_sysmgr = -1;
 
-//recebe x e retorna o movimento (centro, direita, esquerda)
-int moviment(x){
-    int16_t right_moviment = 90;  
-    int16_t left_moviment = -90;
-    int16_t m; 
-    if (x > right_moviment) {
-        m = 1; //1 = direita 
-    } else if (x < left_moviment) {
-        m = 2; //2 = esquerda
-    } else {
-        m = 0; 
-    }
-    return m; 
+/* Tries to open /dev/mem to give access to physical addresses  */
+int open_physical (int fd){
+	if (fd == -1)
+		if ((fd = open( "/dev/mem", (O_RDWR | O_SYNC))) == -1){
+			printf ("ERROR: could not open \"/dev/mem\"...\n");
+			return (-1);
+		}
+	return fd;
 }
 
-/* void teste(void){
-    printf("aaaa\n"); 
-} */
+/* Closes /dev/mem to stop access to physical addresses  */
+void close_physical (int fd){
+	close (fd);
+}
+
+/* Maps a physical address range to a virtual address space.
+Receives: a file descriptor (fd), the base physical address (base), 
+and the size of the memory region (span).
+Returns: a pointer to the mapped virtual address, or NULL if the 
+mapping fails.                                                    */
+void* map_physical(int fd, unsigned int base, unsigned int span){
+	void *virtual_base;
+
+	virtual_base = mmap (NULL, span, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, base);
+	if (virtual_base == MAP_FAILED){
+		printf ("ERROR: mmap() failed...\n");
+		close (fd);
+		return (NULL);
+	}
+
+	return virtual_base;
+}
+
+/* Unmaps a previously mapped virtual address space.
+Receives: a pointer to the virtual base address (virtual_base) 
+and the size of the memory region (span).
+Returns: 0 on success, or -1 in case of failure.             */
+int unmap_physical(void * virtual_base, unsigned int span){
+	if (munmap (virtual_base, span) != 0){
+		printf ("ERRO: munmap() failed...\n");
+		return (-1);
+	}
+	return 0;
+}
 
 uint8_t ADXL345_ConfigureToGame(void){
 
     uint8_t devid;
-    int16_t mg_per_lsb = 4;
-    int16_t XYZ[3];
-    int16_t direction; 
 
     //Configure MUX to connect I2C0 controller to ADXL345
 	if ((fd_sysmgr = open_physical(fd_sysmgr)) == -1) {
@@ -64,36 +88,10 @@ uint8_t ADXL345_ConfigureToGame(void){
 	printf("Getting ID\n");
 
 	ADXL345_IdRead(&devid);
-	//printf("%#x\n", devid);
-    
-    // Configure Pin Muxing
-    //Pinmux_Config();
-    
-    // Initialize I2C0 Controller
     I2C0_Init();
-    
-    // 0xE5 is read from DEVID(0x00) if I2C is functioning correctly
     ADXL345_REG_READ(0x00, &devid);
 
     return devid; 
-    
-    // Correct Device ID
-    /* if (devid == 0xE5){
-        // Initialize accelerometer chip
-        ADXL345_Init();
-        
-        while(1){
-            if (ADXL345_WasActivityUpdated()){
-                ADXL345_XYZ_Read(XYZ);
-                direction = moviment((XYZ[0]*mg_per_lsb)); 
-                printf("%d\n",direction); 
-                //printf("X=%d mg, Y=%d mg, Z=%d mg\n", XYZ[0]*mg_per_lsb, XYZ[1]*mg_per_lsb, XYZ[2]*mg_per_lsb);
-            }
-        }
-    } else {
-        printf("Incorrect device ID\n");
-    } */
-
 }
 
 
@@ -275,14 +273,10 @@ void ADXL345_Calibrate(){
     // Parar medição
     ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_STANDBY);
     
-    // printf("Average X=%d, Y=%d, Z=%d\n", average_x, average_y, average_z);
-    
     // Calcular os offsets (LSB 15.6 mg)
     offset_x += ROUNDED_DIVISION(0-average_x, 4);
     offset_y += ROUNDED_DIVISION(0-average_y, 4);
     offset_z += ROUNDED_DIVISION(256-average_z, 4);
-    
-    // printf("Calibration: offset_x: %d, offset_y: %d, offset_z: %d (LSB: 15.6 mg)\n",offset_x,offset_y,offset_z);
     
     // Definir os registradores de offset
     ADXL345_REG_WRITE(ADXL345_REG_OFSX, offset_x);
@@ -339,52 +333,19 @@ void ADXL345_IdRead(uint8_t *pId){
 }
 
 
-// Abrir /dev/mem, se ainda não estiver aberto, para dar acesso a endereços físicos
-int open_physical (int fd)
-{
-	if (fd == -1)
-		if ((fd = open( "/dev/mem", (O_RDWR | O_SYNC))) == -1)
-		{
-			printf ("ERRO: não foi possível abrir \"/dev/mem\"...\n");
-			return (-1);
-		}
-	return fd;
+//recebe x e retorna o movimento (centro, direita, esquerda)
+int moviment(x){
+    int16_t right_moviment = 90;  
+    int16_t left_moviment = -90;
+    int16_t m; 
+    if (x > right_moviment) {
+        m = 1; //1 = direita 
+    } else if (x < left_moviment) {
+        m = 2; //2 = esquerda
+    } else {
+        m = 0; 
+    }
+    return m; 
 }
 
-// Fechar /dev/mem para dar acesso a endereços físicos
-void close_physical (int fd)
-{
-	close (fd);
-}
 
-/*
- * Estabelecer um mapeamento de endereço virtual para os endereços físicos começando em base, e
- * estendendo-se por span bytes.
- */
-void* map_physical(int fd, unsigned int base, unsigned int span)
-{
-	void *virtual_base;
-
-	// Obter um mapeamento dos endereços físicos para endereços virtuais
-	virtual_base = mmap (NULL, span, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, base);
-	if (virtual_base == MAP_FAILED)
-	{
-		printf ("ERRO: mmap() falhou...\n");
-		close (fd);
-		return (NULL);
-	}
-	return virtual_base;
-}
-
-/*
- * Fechar o mapeamento de endereço virtual previamente aberto
- */
-int unmap_physical(void * virtual_base, unsigned int span)
-{
-	if (munmap (virtual_base, span) != 0)
-	{
-		printf ("ERRO: munmap() falhou...\n");
-		return (-1);
-	}
-	return 0;
-}

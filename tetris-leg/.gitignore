@@ -1,7 +1,5 @@
 main
 tetris
-teste
-testris.c
 tetris.o
 button.o
 vga.o 

@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-// #include <ncurses.h>
-#include <unistd.h> // Para usleep()
+#include <unistd.h> 
 #include "vga.h"
 #include <stdbool.h>
 #include "button.h"
