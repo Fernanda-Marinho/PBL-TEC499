@@ -104,7 +104,7 @@ Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seg
 | Permitir que uma peça chegue ao topo da tela | Game over.     
 
 ### Iniciar o jogo  
-![Iniciar o jogo](media/initgame.gif)
+<img src="media/initgame.gif" alt="Iniciar o jogo" width="300"/>
 
 ### Mover peça para a esquerda  
 ![Mover peça para a esquerda](media/left.gif)
