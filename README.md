@@ -104,22 +104,22 @@ Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seg
 | Permitir que uma peça chegue ao topo da tela | Game over.     
 
 ### Iniciar o jogo  
-<img src="media/initgame.gif" alt="Iniciar o jogo" width="300"/>
+<img src="media/initgame.gif" alt="Iniciar o jogo" width="270"/>
 
 ### Mover peça para a esquerda  
-<img src="media/left.gif" alt="Mover peça para a esquerda" width="300"/>
+<img src="media/left.gif" alt="Mover peça para a esquerda" width="270"/>
 
 ### Peça centralizada  
-<img src="media/center.gif" alt="Peça centralizada" width="300"/>
+<img src="media/center.gif" alt="Peça centralizada" width="270"/>
 
 ### Mover peça para a direita  
-<img src="media/right.gif" alt="Mover peça para a direita" width="300"/>
+<img src="media/right.gif" alt="Mover peça para a direita" width="270"/>
 
 ### Pausa no jogo  
-<img src="media/pause.gif" alt="Pausa no jogo" width="300"/>
+<img src="media/pause.gif" alt="Pausa no jogo" width="270"/>
 
 ### Pontuação  
-<img src="media/score.gif" alt="Pontuação" width="300"/>
+<img src="media/score.gif" alt="Pontuação" width="270"/>
 
 ### Game over  
-<img src="media/gameover.gif" alt="Game over" width="300"/>
+<img src="media/gameover.gif" alt="Game over" width="270"/>
