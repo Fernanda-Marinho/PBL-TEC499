@@ -103,17 +103,23 @@ Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seg
 | Formar uma linha completa                   | Quebrar a linha e somar 100 pontos.                     |
 | Permitir que uma peça chegue ao topo da tela | Game over.     
 
-Iniciar o jogo
+### Iniciar o jogo  
 ![Iniciar o jogo](media/initgame.gif)
-Mover peça para a esquerda
+
+### Mover peça para a esquerda  
 ![Mover peça para a esquerda](media/left.gif)
-Peça centralizada
+
+### Peça centralizada  
 ![Peça centralizada](media/center.gif)
-Mover peça para a direita
+
+### Mover peça para a direita  
 ![Mover peça para a direita](media/right.gif)
-Pausa no jogo
+
+### Pausa no jogo  
 ![Pausa no jogo](media/pause.gif)
-Pontuação
+
+### Pontuação  
 ![Pontuação](media/score.gif)
-Game over
+
+### Game over  
 ![Game over](media/gameover.gif)
