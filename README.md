@@ -64,3 +64,17 @@ O projeto é implementado na placa de desenvolvimento Intel® DE1-SoC, uma plata
 O HPS abriga um processador ARM Cortex A9 dual-core, que é responsável pelo processamento de dados, juntamente com uma porta de memória DDR3 e um conjunto de dispositivos periféricos. O FPGA, por sua vez, implementa dois processadores Intel Nios® II, além de várias portas periféricas, como memória, módulos de temporização, áudio, vídeo, PS/2, conversão analógica-digital, e portas paralelas conectadas a interruptores e luzes.
 
 Para o desenvolvimento do software, foi utilizada a linguagem de programação C, além do Visual Studio Code (VSCode), um editor de código-fonte que oferece suporte a várias linguagens de programação.
+
+# Testes
+Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seguintes testes respectivamente:
+
+| Ação                                        | Resultado                                                  |
+|---------------------------------------------|-----------------------------------------------------------|
+| Botão 1                                      | Iniciar o jogo.                                          |
+| Inclinar a placa para a direita             | Mover a peça para a direita.                             |
+| Inclinar a placa para a esquerda            | Mover a peça para a esquerda.                            |
+| Deixar a placa centralizada                 | Fazer a peça cair sem alterar seu movimento.            |
+| Botão 0                                      | Pausar o jogo.                                          |
+| Botão 0                                     | Continuar o jogo.                                       |
+| Formar uma linha completa                   | Quebrar a linha e somar 100 pontos.                     |
+| Permitir que uma peça chegue ao topo da tela | Game over.     
