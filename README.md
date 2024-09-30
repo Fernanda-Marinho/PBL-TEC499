@@ -107,19 +107,19 @@ Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seg
 <img src="media/initgame.gif" alt="Iniciar o jogo" width="300"/>
 
 ### Mover peça para a esquerda  
-![Mover peça para a esquerda](media/left.gif)
+<img src="media/left.gif" alt="Mover peça para a esquerda" width="300"/>
 
 ### Peça centralizada  
-![Peça centralizada](media/center.gif)
+<img src="media/center.gif" alt="Peça centralizada" width="300"/>
 
 ### Mover peça para a direita  
-![Mover peça para a direita](media/right.gif)
+<img src="media/right.gif" alt="Mover peça para a direita" width="300"/>
 
 ### Pausa no jogo  
-![Pausa no jogo](media/pause.gif)
+<img src="media/pause.gif" alt="Pausa no jogo" width="300"/>
 
 ### Pontuação  
-![Pontuação](media/score.gif)
+<img src="media/score.gif" alt="Pontuação" width="300"/>
 
 ### Game over  
-![Game over](media/gameover.gif)
+<img src="media/gameover.gif" alt="Game over" width="300"/>
