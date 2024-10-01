@@ -162,4 +162,4 @@ Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seg
 <img src="media/gameover.gif" alt="Game over" width="270"/>
 
 # Conclusão
-Para a realização deste projeto, foi fundamental aplicar conhecimentos de interação hardware-software, a fim de desenvolver um jogo funcional. Também foi necessário compreender os princípios básicos da arquitetura da DE1-SoC, utilizando sua interface de comunicação I2C, saída de vídeo VGA e periféricos como botões. Ao final, o projeto atingiu os objetivos estabelecidos, proporcionando uma experiência de jogo completa.
+Para a realização deste projeto, foi fundamental aplicar conhecimentos de interação hardware-software, a fim de desenvolver um jogo funcional. A compreensão dos princípios básicos da arquitetura da DE1-SoC, como a interface de comunicação I2C, a saída de vídeo VGA e o uso de periféricos como botões, foi essencial para integrar esses elementos. Ao final, o projeto atingiu os objetivos estabelecidos, proporcionando uma experiência de jogo completa.
