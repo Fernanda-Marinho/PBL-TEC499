@@ -50,7 +50,7 @@ Para evitar sobrecarga do sistema e permitir que outros processos sejam executad
 Para possibilitar o acesso ao acelerômetro (ADXL345) presente na placa DE1-SOC, é necessário mapear a memória física para o espaço de endereçamento virtual. Esse processo envolve duas etapas principais.
 
 ## Passo 1: Abertura do `/dev/mem`
-O arquivo especial `<code>/dev/mem</code>`, em sistemas Linux, permite interação direta com o hardware, contornando as proteções do kernel. Para acessá-lo, são concedidas permissões de leitura e escrita, além de garantir sincronização de I/O.
+O arquivo especial **`/dev/mem`**, em sistemas Linux, permite interação direta com o hardware, contornando as proteções do kernel. Para acessá-lo, são concedidas permissões de leitura e escrita, além de garantir sincronização de I/O.
 
 ## Passo 2: Mapeamento da Memória
 Após a abertura do arquivo, o próximo passo é mapear os endereços do **System Manager (SYSMGR)** e do controlador **I2C0**. Durante esse processo, define-se o endereço base, que marca o ponto de partida na memória física, e o tamanho da área a ser mapeada (span), indicando a extensão da memória a ser acessada. O sistema operacional atribui um endereço virtual à área mapeada, permitindo leitura e escrita. O compartilhamento entre processos também é habilitado, possibilitando que diferentes partes do sistema alterem essa região de memória simultaneamente, garantindo uma comunicação eficiente entre componentes.
