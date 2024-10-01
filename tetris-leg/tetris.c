@@ -9,78 +9,110 @@
 #include <pthread.h>
 #include <string.h>
 
+// piece specifications
 #define WIDTH 10
 #define HEIGHT 20
 #define TETROMINOES_QUANT 13
 
-// Matriz de tetrominos
+
+// game board 
+int board[HEIGHT][WIDTH] = {0};
+
+// current position of the active and next tetromino piece  
+int currentX, currentY; 
+int currentPiece;   
+int nextPiece;     
+
+// game state flags
+bool isPaused = false; // estado de pausa do jogo
+bool isStarted = false;
+
+// score tracking
+int score = 0;
+char scoreStr[50] = "0";
+
+// threads variables 
+pthread_mutex_t pauseMutex;
+
+
+/* Tetromino array. 
+Receives an array of tetrominoes.    */ 
 int tetrominoes[TETROMINOES_QUANT][4][4] = {
-    // falta colocar/mudar as peças 
     { 
         {1, 1},
         {0, 0}
-    },{ 
+    },
+
+    { 
         {1, 0},
         {1, 0}  
-    },{ 
+    },
+    
+    { 
         {0, 1},
         {1, 1}
-    }, { 
+    }, 
+    
+    { 
         {1, 0},
         {1, 1}
-    },{ 
+    },
+    
+    { 
         {1, 1},
         {1, 0}
-    },{ 
+    },
+    
+    { 
         {1, 1},
         {0, 1}
-    },{ 
+    },
+    
+    { 
         {1, 1},
         {1, 1}
     },
+    
     { 
         {0, 0, 0},
         {1, 1, 1},
         {0, 0, 0}
-    },{ 
+    },
+    
+    { 
         {0, 1, 0},
         {0, 1, 0},
         {0, 1, 0}
-    },{
+    },
+    
+    {
         {0, 1, 0},
         {1, 1, 1},
         {0, 0, 0}
-    },{
+    },
+    
+    {
         {0, 1, 0},
         {0, 1, 1},
         {0, 1, 0}
-    },{
+    },
+    
+    {
         {0, 1, 0},
         {1, 1, 0},
         {0, 1, 0}
-    },{
+    },
+    
+    {
         {0, 0, 0},
         {1, 1, 1},
         {0, 1, 0}
     }
 };
 
-// Campo de jogo
-int board[HEIGHT][WIDTH] = {0};
-
-
-int currentX, currentY; // Posição atual da peça
-int currentPiece;   // Índice da peça atual
-int nextPiece;      // Índice da próxima peça
-bool isPaused = false; // estado de pausa do jogo
-bool isStarted = false;
-int score = 0;
-char scoreStr[50] = "0";
-
-pthread_mutex_t pauseMutex;
-pthread_mutex_t eixoxMutex; 
-
-
+/* Converts an integer to a string.
+Receives the integer to convert and the character array (string) where the converted 
+number will be stored.     */
 void intToStr(int N, char *str) {
     int i = 0;
     int sign = N;
@@ -99,50 +131,50 @@ void intToStr(int N, char *str) {
     }
 }
 
+/* Monitors the state of a button in a continuous loop and determines the pause 
+and start states of the game.      */
+void* monitorButton() {
+    while (1) { 
+        int buttonState = buttonPressed(); // current state of the button
 
-
-void* monitorButton(void* arg) {
-    while (1) { // Use 1 para loop infinito em C
-        int buttonState = buttonPressed(); // Obter estado do botão
-
-        // printf("botao state = %d\n", buttonState);
-
-        pthread_mutex_lock(&pauseMutex); // Bloquear mutex para sincronização
+        pthread_mutex_lock(&pauseMutex); // lock the mutex
 
         if (buttonState == 1) {
-            isPaused = !isPaused; // Alterna o estado de pausa
+            isPaused = !isPaused; // toggle the pause state
         } else if (buttonState == 2) {
-            isStarted = !isStarted;
+            isStarted = !isStarted; // toggle the start state
         } 
         
-        pthread_mutex_unlock(&pauseMutex); // Desbloquear o mutex
-        usleep(10000); // Pausar a thread por 10 ms
+        pthread_mutex_unlock(&pauseMutex); // unlock the mutex
+
+        usleep(10000);
     }
     return NULL;
 }
 
 
-// Função para escolher um índice de peça aleatório
+/* Gets a random piece.          */
 int getRandomPiece() {
     return rand() % TETROMINOES_QUANT; // Escolhe aleatoriamente um índice entre 0 e 6
 }
 
-// Inicializa a próxima peça
+/* Initializes the next piece.    */
 void initializeNextPiece() {
     nextPiece = getRandomPiece();
 }
 
-// Inicializa a peça atual
+/* Initializes the current tetromino piece.    */
 void initializeCurrentPiece() {
-    currentPiece = nextPiece; // A peça atual é a próxima peça
-    initializeNextPiece();    // Define a próxima peça para a próxima vez
+    currentPiece = nextPiece; // current becomes the next   
+    initializeNextPiece();    // defines a new next piece
 }
 
-/* Função para verificar colisão  
-Rebebe: a posicao x e y da peca
-*/
+/* Checks for collision of a piece with the board boundaries or 
+other pieces. 
+Receives the x and y position os the piece (x, y).
+Returns true if there is a collision; otherwise, returns false.   */
 bool checkCollision(int x, int y) {
-    int pieceHeight = (currentPiece == 1) ? 2 : 4; // Peça O tem altura 2
+    int pieceHeight = (currentPiece == 1) ? 2 : 4;
     for (int i = 0; i < pieceHeight; i++) {
         for (int j = 0; j < 4; j++) {
             if (tetrominoes[currentPiece][i][j] && 
@@ -154,32 +186,33 @@ bool checkCollision(int x, int y) {
     return false;
 }
 
-/* Função que remove as linhas que estão completas da matriz do jogo e move tudo que está em cima para baixo */
+/* Checks if there is a full line, remove it and update the score.   */
 void removeFullLines() {
-    //atualizar pontuação 
     for (int i = HEIGHT - 1; i >= 0; i--) {
         bool fullLine = true;
         for (int j = 0; j < WIDTH; j++) {
-            if (board[i][j] == 0) {
+            if (board[i][j] == 0) {  // found an empty cell 
                 fullLine = false;
                 break;
             }
         }
-        if (fullLine) {
-            // Remove a linha e atualiza a pontuação
-            score += 100; // Adiciona 100 pontos por linha completa
+
+        if (fullLine) { //found a full line 
+            
+            // update score and convert in a string to display in vga monitor
+            score += 100; 
             intToStr(score, scoreStr);
-            // Move todas as linhas acima uma linha para baixo
+            
             for (int k = i; k > 0; k--) {
                 for (int j = 0; j < WIDTH; j++) {
-                    board[k][j] = board[k - 1][j];
+                    board[k][j] = board[k - 1][j]; // move all lines above one row down
                 }
             }
-            // Limpa a linha superior
+
             for (int j = 0; j < WIDTH; j++) {
-                board[0][j] = 0;
+                board[0][j] = 0;  // clear the topmost line
             }
-            i++; // Verifica a linha novamente
+            i++; 
         }
     }
 }
