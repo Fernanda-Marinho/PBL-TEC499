@@ -22,7 +22,7 @@ sudo make run
 
 # Lógica do jogo
 
-<img src="media/logicgame.png" alt="Lógica do jogo" width="600"/>
+<img src="media/logicgame.png" alt="Lógica do jogo" width="750"/>
 
 # VGA
 
