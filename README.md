@@ -44,7 +44,7 @@ A thread de monitoramento é responsável por verificar continuamente o estado d
 
 Durante a execução do loop, um mutex é utilizado para proteger o acesso ao estado de pausa/início do jogo, assegurando que as alterações nesse estado sejam feitas de forma segura e evitando condições de corrida. Isso é crucial para a integridade do estado do jogo, especialmente em situações onde múltiplos eventos podem ocorrer simultaneamente.
 
-Para evitar sobrecarga do sistema e permitir que outros processos sejam executados, a thread faz uma pausa de 10 milissegundos entre as leituras dos botões. Essa abordagem equilibrada permite uma resposta rápida às interações do usuário, ao mesmo tempo que mantém a eficiência do sistema.
+Para evitar sobrecarga do sistema e permitir que outros processos sejam executados, a thread faz uma pausa de 10 milissegundos entre as leituras dos botões.
 
 # Mapeamento de Memória
 Para possibilitar o acesso ao acelerômetro (ADXL345) presente na placa DE1-SOC, é necessário mapear a memória física para o espaço de endereçamento virtual. Esse processo envolve duas etapas principais.
@@ -124,7 +124,7 @@ O projeto é implementado na placa de desenvolvimento Intel® DE1-SoC, uma plata
 
 O HPS abriga um processador ARM Cortex A9 dual-core, que é responsável pelo processamento de dados, juntamente com uma porta de memória DDR3 e um conjunto de dispositivos periféricos. O FPGA, por sua vez, implementa dois processadores Intel Nios® II, além de várias portas periféricas, como memória, módulos de temporização, áudio, vídeo, PS/2, conversão analógica-digital, e portas paralelas conectadas a interruptores e luzes.
 
-Para o desenvolvimento do software, foi utilizada a linguagem de programação C, além do Visual Studio Code (VSCode), um editor de código-fonte que oferece suporte a várias linguagens de programação.
+O sistema operacional utilizado é o Linux. Para o desenvolvimento do software, foi utilizada a linguagem de programação C, além do Visual Studio Code (VSCode), um editor de código-fonte que oferece suporte a várias linguagens de programação.
 
 # Testes
 Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seguintes testes respectivamente:
