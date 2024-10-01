@@ -217,9 +217,10 @@ void removeFullLines() {
     }
 }
 
-// Função para adicionar a peça ao campo (ajustada para lidar com tamanhos de peças menores)
+/* Places the current piece into the game board. After that, 
+check and remove any completed lines.      */
 void placePiece() {
-    int pieceHeight = (currentPiece == 1) ? 2 : 4; // Peça O tem altura 2
+    int pieceHeight = (currentPiece == 1) ? 2 : 4; 
     for (int i = 0; i < pieceHeight; i++) {
         for (int j = 0; j < 4; j++) {
             if (tetrominoes[currentPiece][i][j]) {
@@ -230,16 +231,19 @@ void placePiece() {
     removeFullLines();
 }
 
-/* Função para mover a peça 
-Recebe: o valor da variação de x e/ou y para movementar a peça
-*/
+/* Moves the current piece based on the specified changes in x (dx) 
+and y (dy) coordinates.  */
 void movePiece(int dx, int dy) {
-    if (!checkCollision(currentX + dx, currentY + dy)) {
+    if (!checkCollision(currentX + dx, currentY + dy)) { 
+        // updated accordingly currentX and currentY
         currentX += dx;
         currentY += dy;
-    } else if (dy != 0) {
+    } else if (dy != 0) { // collision in vertical movement
+        // put the current piece and initializes the next piece
         placePiece();
         initializeCurrentPiece();
+
+        // piece reset to the starting position in the center of the board at the top
         currentX = WIDTH / 2 - 2;
         currentY = 0;
     }
