@@ -82,6 +82,28 @@ Para otimizar a detecção de movimentos, o ADXL345 permite o uso de interrupç�
 ## Controle de Energia
 A gestão de energia é feita pelo registrador **POWER_CTL (0x2D)**. O dispositivo é inicialmente colocado em modo de standby (espera), o que garante que nenhuma medição seja realizada até que todas as configurações estejam concluídas. Uma vez configurado, o modo de medição é ativado, permitindo que o ADXL345 comece a monitorar os movimentos.
 
+## Leitura dos Dados
+
+Para iniciar a leitura dos eixos, um comando é enviado ao acelerômetro, solicitando acesso ao registrador de dados. O endereço inicial utilizado pelo ADXL345 é **`0x32`**, que marca o início da sequência de dados dos eixos. Esse endereço é transmitido para o registrador **`I2C0_DATA_CMD`** (offset: `0x00000004`), adicionando-se **0x400** para indicar o envio do sinal START no barramento I2C.
+
+Em seguida, são enviados sinais de leitura para obter um total de seis bytes (dois por eixo: X, Y e Z). Cada requisição é feita através do registrador **`I2C0_DATA_CMD`**, utilizando o valor **`0x100`** para indicar a leitura.
+
+Após o acelerômetro responder, o registrador **`I2C0_RXFLR`** (offset: `0x0000001E`) é consultado para verificar a disponibilidade de dados no buffer de recepção. Assim que os dados estiverem prontos, eles são lidos diretamente do registrador **`I2C0_DATA_CMD`**.
+
+## Combinação dos Bits
+
+Os dados obtidos para os três eixos (X, Y e Z) são organizados em seis bytes, com dois bytes dedicados a cada eixo:
+- Um byte corresponde aos 8 bits menos significativos (**LSB**).
+- O outro byte representa os 8 bits mais significativos (**MSB**).
+
+Para combinar os dois bytes de cada eixo e formar um valor de 16 bits:
+- O byte mais significativo (MSB) é deslocado 8 bits para a esquerda.
+- Esse valor é então combinado com o byte menos significativo (LSB) usando uma operação de "OU" bit a bit.
+
+## Interpretação dos Dados dos Eixos
+
+As informações extraídas da leitura são utilizadas no código para determinar o movimento das peças. A inclinação da placa para a direita ou esquerda é interpretada com base nos valores obtidos, permitindo assim o controle das peças no jogo.
+
 # Recursos
 O projeto é implementado na placa de desenvolvimento Intel® DE1-SoC, uma plataforma versátil projetada para experimentos em organização de computadores e sistemas embarcados. A arquitetura da DE1-SoC é composta por dois principais componentes: o Hard Processor System (HPS) e o FPGA, ambos integrados no chip Cyclone® V SoC.
 
