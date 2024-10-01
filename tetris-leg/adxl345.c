@@ -81,168 +81,132 @@ void I2C0_Init(){
     
 }
 
-// Função para permitir que componentes do lado FPGA (ex. processadores Nios II) possam
-// acessar o controlador I2C0 através da ponte F2H. Esta função
-// precisa ser chamada de um programa ARM, e para permitir que um programa Nios II
-// acesse o controlador I2C0.
+/* Enables FPGA-side components to access the I2C0 controller via.   */
 void I2C0_Enable_FPGA_Access(){
-
-    // Desafastar resets da ponte FPGA
     *(RSTMGR_BRGMODRST) = 0;
-    
-    // Habilitar mestres não seguros para acessar o I2C0
     *(L3REGS_L4SP) = *(L3REGS_L4SP) | 0x4;
-    
-    // Habilitar mestres não seguros para acessar registradores de pinmuxing (no sysmgr)
     *(L3REGS_L4OSC1) = *(L3REGS_L4OSC1) | 0x10;
 }
 
-// Escrever valor no registrador interno no endereço especificado
+/* Writes a value to an internal register of the adxl345 at the specified address.
+Receives the register address and the value to be written. */
 void ADXL345_REG_WRITE(uint8_t address, uint8_t value){
-    
-    // Enviar endereço do registrador (+0x400 para enviar sinal START)
-    *(i2c0_base_ptr + I2C0_DATA_CMD) = address + 0x400;
-    
-    // Enviar valor
-    *(i2c0_base_ptr + I2C0_DATA_CMD) = value;
-    
+    *(i2c0_base_ptr + I2C0_DATA_CMD) = address + 0x400; // send the register address 
+    *(i2c0_base_ptr + I2C0_DATA_CMD) = value; // send the value 
 }
 
-// Ler valor do registrador interno no endereço especificado
+/* Reads a value from an internal register of the adxl345 at the specified address.
+Receives the register address and stores the read value in the provided pointer. */
 void ADXL345_REG_READ(uint8_t address, uint8_t *value){
-
-    // Enviar endereço do registrador (+0x400 para enviar sinal START)
-    *(i2c0_base_ptr + I2C0_DATA_CMD) = address + 0x400;
-    
-    // Enviar sinal de leitura
-    *(i2c0_base_ptr + I2C0_DATA_CMD) = 0x100;
-    
-    // Ler a resposta (primeiro esperar até que o buffer RX contenha dados)  
-    while (*(i2c0_base_ptr + I2C0_RXFLR) == 0){}
-    *value = *(i2c0_base_ptr + I2C0_DATA_CMD);
+    *(i2c0_base_ptr + I2C0_DATA_CMD) = address + 0x400; // send the register 
+    *(i2c0_base_ptr + I2C0_DATA_CMD) = 0x100;  // send the read signal
+     
+    while (*(i2c0_base_ptr + I2C0_RXFLR) == 0){} 
+    *value = *(i2c0_base_ptr + I2C0_DATA_CMD);  // read the response  
 }
 
-// Ler múltiplos registradores internos consecutivos
+/* Reads multiple consecutive internal registers from the adxl345.
+Receives the starting register address, an array to store the read values, 
+and the number of registers to read (len). */
 void ADXL345_REG_MULTI_READ(uint8_t address, uint8_t values[], uint8_t len){
 
-    // Enviar endereço do registrador (+0x400 para enviar sinal START)
-    *(i2c0_base_ptr + I2C0_DATA_CMD) = address + 0x400;
-    
-    // Enviar sinal de leitura len vezes
     int i;
+    *(i2c0_base_ptr + I2C0_DATA_CMD) = address + 0x400;
     for (i=0;i<len;i++)
         *(i2c0_base_ptr + I2C0_DATA_CMD) = 0x100;
 
-    // Ler os bytes
     int nth_byte=0;
     while (len){
         if ((*(i2c0_base_ptr + I2C0_RXFLR)) > 0){
-            values[nth_byte] = *(i2c0_base_ptr + I2C0_DATA_CMD);
+            values[nth_byte] = *(i2c0_base_ptr + I2C0_DATA_CMD);  // store each read byte in the array
             nth_byte++;
             len--;
         }
     }
 }
 
-// Inicializar o chip ADXL345
+/* Initializes the ADXL345 accelerometer chip.   */
 void ADXL345_Init(){
 
-    // Faixa de +- 16g, resolução total
-    ADXL345_REG_WRITE(ADXL345_REG_DATA_FORMAT, XL345_RANGE_16G | XL345_FULL_RESOLUTION);
-    
-    // Taxa de Dados de Saída: 200Hz
-    ADXL345_REG_WRITE(ADXL345_REG_BW_RATE, XL345_RATE_200);
+    ADXL345_REG_WRITE(ADXL345_REG_DATA_FORMAT, XL345_RANGE_16G | XL345_FULL_RESOLUTION); // range to +- 16g
+    ADXL345_REG_WRITE(ADXL345_REG_BW_RATE, XL345_RATE_200);  // rate of 200hz
 
-    // NOTA: O bit DATA_READY não é confiável. Ele é atualizado em uma taxa muito maior do que a Taxa de Dados
-    // Use as interrupções de Atividade e Inatividade.
-    //----- Habilitando interrupções -----//
-    ADXL345_REG_WRITE(ADXL345_REG_THRESH_ACT, 0x04);	// limiar de atividade
-    ADXL345_REG_WRITE(ADXL345_REG_THRESH_INACT, 0x02);	// limiar de inatividade
-    ADXL345_REG_WRITE(ADXL345_REG_TIME_INACT, 0x02);	// tempo para inatividade
-    ADXL345_REG_WRITE(ADXL345_REG_ACT_INACT_CTL, 0xFF);	// Habilita acoplamento AC para limiares
-    ADXL345_REG_WRITE(ADXL345_REG_INT_ENABLE, XL345_ACTIVITY | XL345_INACTIVITY );	// habilitar interrupções
-    //-------------------------------//
+    ADXL345_REG_WRITE(ADXL345_REG_THRESH_ACT, 0x04);	
+    ADXL345_REG_WRITE(ADXL345_REG_THRESH_INACT, 0x02);	
+    ADXL345_REG_WRITE(ADXL345_REG_TIME_INACT, 0x02);	
+    ADXL345_REG_WRITE(ADXL345_REG_ACT_INACT_CTL, 0xFF);	
+    ADXL345_REG_WRITE(ADXL345_REG_INT_ENABLE, XL345_ACTIVITY | XL345_INACTIVITY );	
     
-    // Parar medição
-    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_STANDBY);
-    
-    // Iniciar medição
-    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_MEASURE);
+    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_STANDBY);  // standby mode
+    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_MEASURE);  // start measurement
 }
 
-// Calibrar o ADXL345. O DE1-SoC deve ser colocado em uma superfície plana,
-// e deve permanecer estacionário durante a calibração.
+/* Calibrates the ADXL345 accelerometer.  */
 void ADXL345_Calibrate(){
-    
+    int i = 0;
     int average_x = 0;
     int average_y = 0;
     int average_z = 0;
+
     int16_t XYZ[3];
+    
     int8_t offset_x;
     int8_t offset_y;
     int8_t offset_z;
     
-    // Parar medição
-    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_STANDBY);
+    uint8_t saved_bw;
+    uint8_t saved_dataformat;
     
-    // Obter os offsets atuais
+    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_STANDBY);  // standby mode
+    
+    // get current offsets
     ADXL345_REG_READ(ADXL345_REG_OFSX, (uint8_t *)&offset_x);
     ADXL345_REG_READ(ADXL345_REG_OFSY, (uint8_t *)&offset_y);
     ADXL345_REG_READ(ADXL345_REG_OFSZ, (uint8_t *)&offset_z);
     
-    // Usar taxa de 100 Hz para calibração. Salvar a taxa atual.
-    uint8_t saved_bw;
+    // get current offsets
     ADXL345_REG_READ(ADXL345_REG_BW_RATE, &saved_bw);
     ADXL345_REG_WRITE(ADXL345_REG_BW_RATE, XL345_RATE_100);
     
-    // Usar faixa de 16g, resolução total. Salvar o formato atual.
-    uint8_t saved_dataformat;
+    // save current rate 
     ADXL345_REG_READ(ADXL345_REG_DATA_FORMAT, &saved_dataformat);
     ADXL345_REG_WRITE(ADXL345_REG_DATA_FORMAT, XL345_RANGE_16G | XL345_FULL_RESOLUTION);
+ 
+    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_MEASURE);  // start measurement 
     
-    // Iniciar medição
-    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_MEASURE);
-    
-    // Obter as médias das acelerações x, y, z sobre 32 amostras (LSB 3.9 mg)
-    int i = 0;
     while (i < 32){
-		// Nota: use DATA_READY aqui, não pode usar ATIVIDADE porque a placa está estacionária.
-        if (ADXL345_IsDataReady()){
-            ADXL345_XYZ_Read(XYZ);
+        if (ADXL345_IsDataReady()){  
+            ADXL345_XYZ_Read(XYZ);  // collect averages for x, y, z
             average_x += XYZ[0];
             average_y += XYZ[1];
             average_z += XYZ[2];
             i++;
         }
     }
+
     average_x = ROUNDED_DIVISION(average_x, 32);
     average_y = ROUNDED_DIVISION(average_y, 32);
     average_z = ROUNDED_DIVISION(average_z, 32);
     
-    // Parar medição
-    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_STANDBY);
+    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_STANDBY);  // standby mode
     
-    // Calcular os offsets (LSB 15.6 mg)
+    // calculate offsets and set registers (LSB 15.6 mg)
     offset_x += ROUNDED_DIVISION(0-average_x, 4);
     offset_y += ROUNDED_DIVISION(0-average_y, 4);
     offset_z += ROUNDED_DIVISION(256-average_z, 4);
-    
-    // Definir os registradores de offset
     ADXL345_REG_WRITE(ADXL345_REG_OFSX, offset_x);
     ADXL345_REG_WRITE(ADXL345_REG_OFSY, offset_y);
     ADXL345_REG_WRITE(ADXL345_REG_OFSZ, offset_z);
     
-    // Restaurar a taxa de largura de banda original
+    // restore original bandwidth rate and data format 
     ADXL345_REG_WRITE(ADXL345_REG_BW_RATE, saved_bw);
-    
-    // Restaurar o formato de dados original
     ADXL345_REG_WRITE(ADXL345_REG_DATA_FORMAT, saved_dataformat);
     
-    // Iniciar medição
-    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_MEASURE);
+    ADXL345_REG_WRITE(ADXL345_REG_POWER_CTL, XL345_MEASURE);  // start measurement
 }
 
-// Retorna verdadeiro se houve atividade desde a última leitura (verifica o bit ATIVIDADE).
+/* Checks the XL345_ACTIVITY bit and returns true if there has been 
+activity since the last reading; otherwise, returns false.*/ 
 bool ADXL345_WasActivityUpdated(){
 	bool bReady = false;
     uint8_t data8;
@@ -254,7 +218,8 @@ bool ADXL345_WasActivityUpdated(){
     return bReady;
 }
 
-// Retorna verdadeiro se há novos dados (verifica o bit DATA_READY).
+/* Checks the XL345_DATAREADY bit and returns true if there is new data 
+available; otherwise, returns false.    */
 bool ADXL345_IsDataReady(){
     bool bReady = false;
     uint8_t data8;
@@ -266,7 +231,8 @@ bool ADXL345_IsDataReady(){
     return bReady;
 }
 
-// Ler dados de aceleração dos três eixos
+/* Reads acceleration data from three axes.
+Receives an array to store the acceleration data.     */
 void ADXL345_XYZ_Read(int16_t szData16[3]){
     uint8_t szData8[6];
     ADXL345_REG_MULTI_READ(0x32, (uint8_t *)&szData8, sizeof(szData8));
@@ -276,60 +242,62 @@ void ADXL345_XYZ_Read(int16_t szData16[3]){
     szData16[2] = (szData8[5] << 8) | szData8[4];
 }
 
-// Ler o registrador de ID
+/* Reads the device ID register and stores the result in the provided pointer.
+Receives a pointer where the device ID will be stored. */
 void ADXL345_IdRead(uint8_t *pId){
     ADXL345_REG_READ(ADXL345_REG_DEVID, pId);
 }
 
 
+/* Configures the adxl345, initializes the I2C and returns the device ID. */
 uint8_t ADXL345_ConfigureToGame(void){
 
     uint8_t devid;
 
-    //Configure MUX to connect I2C0 controller to ADXL345
+    // memory mapping for system manager
 	if ((fd_sysmgr = open_physical(fd_sysmgr)) == -1) {
-		return(-1);
-	}
+        return(-1);
+    }
+    if ((sysmgrbase_virtual = map_physical(fd_sysmgr, SYSMGR_BASE, SYSMGR_SPAN)) == NULL) {
+        return(-1);
+    }
+    sysmgr_base_ptr = (unsigned int *) sysmgrbase_virtual;
 
-	if ((sysmgrbase_virtual = map_physical(fd_sysmgr, SYSMGR_BASE, SYSMGR_SPAN)) == NULL) {
-		return(-1);
-	}
-
-	sysmgr_base_ptr = (unsigned int *) sysmgrbase_virtual;
-
+    // memory mapping for I2C0
     if ((fd_i2c0base = open_physical(fd_i2c0base)) == -1) {
-		return(-1);
-	}
-
-	if ((i2c0base_virtual = map_physical(fd_i2c0base, I2C0_BASE, I2C0_SPAN)) == NULL) {
-		return(-1);
-	}
-
-	i2c0_base_ptr = (unsigned int *) i2c0base_virtual;
-	printf("Starting I2C0_Init()\n");
-
-	I2C0_Init();
-	printf("Getting ID\n");
-
-	ADXL345_IdRead(&devid);
+        return(-1);
+    }
+    if ((i2c0base_virtual = map_physical(fd_i2c0base, I2C0_BASE, I2C0_SPAN)) == NULL) {
+        return(-1);
+    }
+    i2c0_base_ptr = (unsigned int *) i2c0base_virtual;
+	
+    // I2C0 initialization
+    printf("Starting I2C0_Init()\n");
     I2C0_Init();
+	
+    printf("Getting ID\n");
+    ADXL345_IdRead(&devid);
     ADXL345_REG_READ(0x00, &devid);
-
-    return devid; 
+    return devid;  
 }
 
 
-//recebe x e retorna o movimento (centro, direita, esquerda)
-int moviment(x){
-    int16_t right_moviment = 90;  
-    int16_t left_moviment = -90;
+/* Determines the direction of movement based on the x-axis value.
+Receives the x-axis and return an integer corresponding to the movement direction. */
+int movement(int x){
     int16_t m; 
-    if (x > right_moviment) {
-        m = 1; //1 = direita 
-    } else if (x < left_moviment) {
-        m = 2; //2 = esquerda
+
+    // threshold values chosen 
+    int16_t right_movement = 90;   
+    int16_t left_movement = -90;
+
+    if (x > right_movement) {
+        m = 1; // right
+    } else if (x < left_movement) {
+        m = 2; // left
     } else {
-        m = 0; 
+        m = 0; // center
     }
     return m; 
 }

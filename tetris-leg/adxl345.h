@@ -143,7 +143,7 @@ void I2C0_Enable_FPGA_Access();
 void Pinmux_Config();
 
 /* Logical Functions */  
-int moviment(int); 
+int movement(int); 
 
 
 #endif 

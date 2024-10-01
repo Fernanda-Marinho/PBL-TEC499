@@ -198,7 +198,7 @@ void placePiece() {
 }
 
 /* Função para mover a peça 
-Recebe: o valor da variação de x e/ou y para movimentar a peça
+Recebe: o valor da variação de x e/ou y para movementar a peça
 */
 void movePiece(int dx, int dy) {
     if (!checkCollision(currentX + dx, currentY + dy)) {
@@ -271,8 +271,8 @@ void  gameLoop() {
         // Verifica se a posição de x foi atualizada
         if (ADXL345_WasActivityUpdated()){
             ADXL345_XYZ_Read(XYZ);
-            direction = moviment((XYZ[0]*4)); //4 = mg_per_lsb
-            switch (direction) { //moviment in ch 
+            direction = movement((XYZ[0]*4)); //4 = mg_per_lsb
+            switch (direction) { //movement in ch 
                 case 1: // Mover para a direita
                     if (!isPaused) movePiece(1, 0);
                     break;
