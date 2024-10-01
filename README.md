@@ -31,7 +31,7 @@ A thread de monitoramento é responsável por verificar continuamente o estado d
 
 Durante a execução do loop, um mutex é utilizado para proteger o acesso ao estado de pausa/início do jogo, assegurando que as alterações nesse estado sejam feitas de forma segura e evitando condições de corrida. Isso é crucial para a integridade do estado do jogo, especialmente em situações onde múltiplos eventos podem ocorrer simultaneamente.
 
-Para evitar sobrecarga do sistema e permitir que outros processos sejam executados, a thread faz uma pausa de 10 milissegundos entre as leituras dos botões. Essa abordagem equilibrada permite uma resposta rápida às interações do usuário, ao mesmo tempo que mantém a eficiência do sistema.
+Para evitar sobrecarga do sistema e permitir que outros processos sejam executados, a thread faz uma pausa de 10 milissegundos entre as leituras dos botões.
 
 # Mapeamento de Memória
 Para possibilitar o acesso ao acelerômetro (ADXL345) presente na placa DE1-SOC, é necessário mapear a memória física para o espaço de endereçamento virtual. Esse processo envolve duas etapas principais.
