@@ -5,7 +5,7 @@ Este projeto tem como objetivo criar um console dedicado, utilizando a plataform
 # Equipe:
 - [Camila de Araújo Bastos](https://github.com/Caamilab)
 - [Fernanda Marinho Silva](https://github.com/Fernanda-Marinho/)
-- [Gabriel Santos Cruz] (https://github.com/GabrielSantosCruz) 
+- [Gabriel Santos Cruz](https://github.com/GabrielSantosCruz) 
 
 # Executando o Projeto
 ### Clonando o Repositório
