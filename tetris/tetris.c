@@ -249,101 +249,104 @@ void movePiece(int dx, int dy) {
     }
 }
 
-// Função para inicializar o jogo, definindo as posições das peças e o valor randomico delas
+/* Initializes the game by placing the current piece in the center position of 
+the board at the top.   */
 void initGame() {
-    // srand(time(NULL));
     currentX = WIDTH / 2 - 2;
     currentY = 0;
 }
 
-// Função para verificar se o jogo acabou
+/* Checks if the game is over by determining if there is a collision 
+at the top of the board.  */
 bool isGameOver() {
     return checkCollision(currentX, currentY); // Se houver colisão no topo, o jogo acaba
 }
 
-// Função principal do jogo
+/* Main function of the game loop.    */
 void  gameLoop() {
     
     int ch;
+    int speed = 500;  
+
     uint8_t idAccel; 
     int16_t XYZ[3];
     int16_t direction;
 
-    idAccel = ADXL345_ConfigureToGame(); 
+    clock_t lastMoveTime = clock();
 
+    idAccel = ADXL345_ConfigureToGame(); 
 
     initGame();
     
-    // Controle de tempo para a animação
-    int speed = 500; // Velocidade de queda (500 milissegundos)
-    clock_t lastMoveTime = clock();
-    if (idAccel == 0xE5){
+    if (idAccel == 0xE5){ // correct address of adxl345
         ADXL345_Init();
         while (1) {
 
         buttonPressed();
-        if (isGameOver()) { // Verifica se o jogo acabou
-
+        if (isGameOver()) { // check if the game has ended
             gameOver();
-            usleep(3000000); // Pausa de 3 segundos para exibir o Game Over
-            exit(0); // Encerra o programa
+            usleep(3000000); 
+            exit(0); 
         }
 
-
+        // check the state of the game pause 
         if (!isPaused) {
             drawMonitor(scoreStr, HEIGHT, WIDTH, board, 4, 4, currentPiece, tetrominoes, currentX, currentY, nextPiece);
-            
-            // Controle do tempo para a peça descer automaticamente
+        
             clock_t currentTime = clock();
+            
             if ((currentTime - lastMoveTime) * 10000 / CLOCKS_PER_SEC > speed) {
-                movePiece(0, 1); // Move a peça para baixo automaticamente
-                lastMoveTime = currentTime; // Atualiza o tempo da última queda
+                movePiece(0, 1); // move the piece down
+                lastMoveTime = currentTime; // update the last drop time
             }
-
         } else {
             gamePaused();
         }
 
-
-        // Verifica se a posição de x foi atualizada
         if (ADXL345_WasActivityUpdated()){
             ADXL345_XYZ_Read(XYZ);
-            direction = movement((XYZ[0]*4)); //4 = mg_per_lsb
-            switch (direction) { //movement in ch 
-                case 1: // Mover para a direita
-                    if (!isPaused) movePiece(1, 0);
+            direction = movement((XYZ[0]*4)); //4 because of the mg_per_lsb
+
+            switch (direction) { 
+                case 1: 
+                    if (!isPaused) movePiece(1, 0);  // move to the right 
                     break;
-                case 2: // Mover para a esquerda
-                    if (!isPaused) movePiece(-1, 0);
+                case 2: 
+                    if (!isPaused) movePiece(-1, 0); // move to the left
                     break;
                 }
             }       
-        
-            usleep(50000); // Pequeno atraso para evitar uso excessivo de CPU
+            usleep(50000); 
         }
     }
     
 }
- // test
-int main() {
+
+
+void main() {
     clearVGA();
-    pthread_t buttonThread; // Declara a thread
+
+    // declare thread and initialize the mutex 
+    pthread_t buttonThread; 
     pthread_mutex_init(&pauseMutex, NULL);
 
-    // Cria a thread que irá monitorar o botão
+    // create the button thread 
     if (pthread_create(&buttonThread, NULL, monitorButton, NULL) != 0) {
-        perror("Erro ao criar a thread do botão");
-        return 1; // Erro ao criar a thread
+        perror("ERROR: could not create the button thread...");
+        return 1;
     }
 
     while(true){
+        // game not started yet
         if(!isStarted){
             mainWindow();
-        } else {
+        }
+
+        // game has started  
+        else {
             initializeNextPiece();
             isStarted = false;
-            gameLoop(); // Inicia o loop do jogo
+            gameLoop(); 
         }
     }
-    return 0;
 }
