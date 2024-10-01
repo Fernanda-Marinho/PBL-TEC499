@@ -16,7 +16,7 @@ cd PBL-TEC499/
 ```
 ### Executando
 ```bash
-cd problema1/ 
+cd tetris/ 
 sudo make run
 ``` 
 
