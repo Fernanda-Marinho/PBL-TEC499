@@ -1,11 +1,13 @@
 # Sistemas Digitais
-*(Mudar isso)*
+
 Este projeto tem como objetivo criar um console dedicado, utilizando a plataforma de desenvolvimento DE1-SoC. A proposta é desenvolver um jogo inspirado no Tetris, integrando programação em C com interações diretas com o hardware. O controle das peças é feito por meio de um acelerômetro, que capta os movimentos do jogador, enquanto botões físicos permitem executar ações como iniciar, pausar e continuar. Além disso, a interface VGA é utilizada para projetar o jogo em um monitor externo.
 
 # Equipe:
 - [Camila de Araújo Bastos](https://github.com/Caamilab)
 - [Fernanda Marinho Silva](https://github.com/Fernanda-Marinho/)
 - Nome 3
+
+# Lógica do jogo
 
 # VGA
 
@@ -145,3 +147,6 @@ Para garantir a funcionalidade e a eficácia do sistema, foram realizados os seg
 
 ### Game over  
 <img src="media/gameover.gif" alt="Game over" width="270"/>
+
+# Conclusão
+Para a realização deste projeto, foi fundamental aplicar conhecimentos de interação hardware-software, a fim de desenvolver um jogo funcional. Também foi necessário compreender os princípios básicos da arquitetura da DE1-SoC, utilizando sua interface de comunicação I2C, saída de vídeo VGA e periféricos como botões. Ao final, o projeto atingiu os objetivos estabelecidos, proporcionando uma experiência de jogo completa.
