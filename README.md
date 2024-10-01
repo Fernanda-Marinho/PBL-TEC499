@@ -22,6 +22,8 @@ sudo make run
 
 # Lógica do jogo
 
+<img src="media/logicgame.png" alt="Lógica do jogo" width="300"/>
+
 # VGA
 
 A funcionalidade de vídeo no projeto é implementada por meio de um conjunto de operações que gerenciam a saída de vídeo na tela VGA.
