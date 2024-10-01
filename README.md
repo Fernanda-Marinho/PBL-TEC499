@@ -7,6 +7,19 @@ Este projeto tem como objetivo criar um console dedicado, utilizando a plataform
 - [Fernanda Marinho Silva](https://github.com/Fernanda-Marinho/)
 - Nome 3
 
+# Executando o Projeto
+### Clonando o Repositório
+```bash
+git clone  https://github.com/Fernanda-Marinho/PBL-TEC499 
+cd PBL-TEC499/
+
+```
+### Executando
+```bash
+cd problema1/ 
+sudo make run
+``` 
+
 # Lógica do jogo
 
 # VGA
